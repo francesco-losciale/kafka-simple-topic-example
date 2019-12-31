@@ -1,11 +1,7 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,18 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -35,14 +27,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestBeanConfiguration.class)
 @EmbeddedKafka
-public class SimpleConsumerProducerIntegrationTest {
+public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProducerTest {
+
+    private static String TOPIC_BASE_NAME = "topic-";
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 
-    private String TOPIC_BASE_NAME = "topic-";
-    private Consumer<String, String> consumer;
-    private Producer<String, String> producer;
+    public SimpleConsumerProducerIntegrationTest() {
+        super(TOPIC_BASE_NAME);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -76,15 +70,9 @@ public class SimpleConsumerProducerIntegrationTest {
         assertThat(result.get().getProducerRecord().value()).isEqualTo("my-test-value");
     }
 
-    private String generateNewTopicName() {
-        return TOPIC_BASE_NAME + new Random().nextInt();
-    }
-
     private void setUpConsumer() {
-        Map<String, Object> configs = setUpConsumerConfigMap();
-        DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory = new DefaultKafkaConsumerFactory<>(
-                configs, new StringDeserializer(), new StringDeserializer()
-        );
+        Map<String, Object> configs = createConsumerConfig();
+        DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory = createKafkaConsumerFactory(configs);
         this.consumer = kafkaConsumerFactory.createConsumer();
     }
 
@@ -94,7 +82,11 @@ public class SimpleConsumerProducerIntegrationTest {
         this.producer = kafkaProducerFactory.createProducer();
     }
 
-    private Map<String, Object> setUpConsumerConfigMap() {
+    Map<String, Object> createProducerConfig() {
+        return new HashMap<>(KafkaTestUtils.producerProps(this.embeddedKafkaBroker));
+    }
+
+    Map<String, Object> createConsumerConfig() {
         Map<String, Object> configs = new HashMap<>(
                 KafkaTestUtils.consumerProps("consumerGroupName", "false", embeddedKafkaBroker)
         );
@@ -102,21 +94,5 @@ public class SimpleConsumerProducerIntegrationTest {
         return configs;
     }
 
-    private Map<String, Object> createProducerConfig() {
-        return new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
-    }
-
-    private DefaultKafkaProducerFactory<String, String> createKafkaProducerFactory(Map<String, Object> configs) {
-        return new DefaultKafkaProducerFactory<>(
-                configs, new StringSerializer(), new StringSerializer()
-        );
-    }
-
-    private Message<String> buildMessage(String topicName, String key, String message) throws JsonProcessingException {
-        return MessageBuilder.withPayload(message)
-                .setHeader(KafkaHeaders.MESSAGE_KEY, key)
-                .setHeader(KafkaHeaders.TOPIC, topicName)
-                .build();
-    }
 }
 
