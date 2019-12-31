@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestBeanConfiguration.class)
-@EmbeddedKafka
+@EmbeddedKafka(controlledShutdown = true)
 public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerProducerTest {
 
     @Autowired

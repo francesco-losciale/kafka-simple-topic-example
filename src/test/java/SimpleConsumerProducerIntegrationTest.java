@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestBeanConfiguration.class)
-@EmbeddedKafka
+@EmbeddedKafka(controlledShutdown = true)
 public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProducerTest {
 
     private static String TOPIC_BASE_NAME = "topic-";
@@ -54,6 +54,8 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
         assertThat(singleRecord).isNotNull();
         assertThat(singleRecord.key()).isEqualTo("my-aggregate-id");
         assertThat(singleRecord.value()).isEqualTo("my-test-value");
+
+        consumer.close();
     }
 
     @Test

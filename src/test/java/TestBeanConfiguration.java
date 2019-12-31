@@ -11,7 +11,7 @@ public class TestBeanConfiguration {
     @Bean
     public EmbeddedKafkaBroker embeddedKafkaBroker_TwoPartitions() {
         return new EmbeddedKafkaBroker(1)
-//                .brokerProperties(Collections.singletonMap(KafkaConfig.LogDirProp(), "/tmp/kafka_tmp"))
+                .brokerProperties(Collections.singletonMap(KafkaConfig.LogDirProp(), "./tmp"))
                 ;
     }
 
