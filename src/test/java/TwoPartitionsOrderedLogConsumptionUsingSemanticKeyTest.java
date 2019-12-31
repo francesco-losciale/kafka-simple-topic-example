@@ -41,7 +41,7 @@ public class TwoPartitionsOrderedLogConsumptionUsingSemanticKeyTest extends Abst
     }
 
     @Test
-    public void should_Not_Read_Messages_In_Ordered_Fashion_When_TopicPartitions_Are_Two() {
+    public void should_Read_Messages_In_Ordered_Fashion_When_TopicPartitions_Are_Two() {
         String topicName = generateNewTopicName();
         String recordSemanticKey = "same-semantic-key-for-all-records-i-want-ordered";
         List<ConsumerRecord<String, String>> consumerRecordList = new ArrayList<>();
@@ -52,6 +52,8 @@ public class TwoPartitionsOrderedLogConsumptionUsingSemanticKeyTest extends Abst
 
         assertThat(valuesFromRecord.size()).isEqualTo(5);
         assertThat(valuesFromRecord).isEqualTo(sortedRecordValues);
+
+        consumer.close();
     }
 
     private List<String> consumeRecordValues(List<ConsumerRecord<String, String>> consumerRecordList) {

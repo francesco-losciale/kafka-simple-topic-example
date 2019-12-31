@@ -50,6 +50,8 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
 
         assertThat(valuesFromRecord.size()).isEqualTo(5);
         assertThat(valuesFromRecord).isNotEqualTo(sortedRecordValues);
+
+        consumer.close();
     }
 
     private List<String> consumeRecordValues(List<ConsumerRecord<String, String>> consumerRecordList) {
