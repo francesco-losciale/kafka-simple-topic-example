@@ -23,6 +23,11 @@ abstract public class AbstractConsumerProducerTest {
         this.topicBaseName = topicBaseName;
     }
 
+    public void setUp() throws Exception {
+        setUpConsumer();
+        setUpProducer();
+    }
+
     protected String generateNewTopicName() {
         return topicBaseName + new Random().nextInt();
     }
@@ -42,6 +47,18 @@ abstract public class AbstractConsumerProducerTest {
     abstract Map<String, Object> createProducerConfig();
 
     abstract Map<String, Object> createConsumerConfig();
+
+    private void setUpConsumer() {
+        Map<String, Object> configs = createConsumerConfig();
+        DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory = createKafkaConsumerFactory(configs);
+        this.consumer = kafkaConsumerFactory.createConsumer();
+    }
+
+    private void setUpProducer() {
+        Map<String, Object> configs = createProducerConfig();
+        DefaultKafkaProducerFactory<String, String> kafkaProducerFactory = createKafkaProducerFactory(configs);
+        this.producer = kafkaProducerFactory.createProducer();
+    }
 
     static Message<String> buildMessage(String topicName, String key, String message) throws JsonProcessingException {
         return MessageBuilder.withPayload(message)

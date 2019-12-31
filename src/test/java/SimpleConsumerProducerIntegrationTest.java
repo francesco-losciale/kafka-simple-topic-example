@@ -40,8 +40,7 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
 
     @Before
     public void setUp() throws Exception {
-        setUpConsumer();
-        setUpProducer();
+        super.setUp();
     }
 
     @Test
@@ -68,18 +67,6 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
         assertThat(result).isNotNull();
         assertThat(result.get().getProducerRecord().key()).isEqualTo("my-aggregate-id");
         assertThat(result.get().getProducerRecord().value()).isEqualTo("my-test-value");
-    }
-
-    private void setUpConsumer() {
-        Map<String, Object> configs = createConsumerConfig();
-        DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory = createKafkaConsumerFactory(configs);
-        this.consumer = kafkaConsumerFactory.createConsumer();
-    }
-
-    private void setUpProducer() {
-        Map<String, Object> configs = createProducerConfig();
-        DefaultKafkaProducerFactory<String, String> kafkaProducerFactory = createKafkaProducerFactory(configs);
-        this.producer = kafkaProducerFactory.createProducer();
     }
 
     Map<String, Object> createProducerConfig() {
