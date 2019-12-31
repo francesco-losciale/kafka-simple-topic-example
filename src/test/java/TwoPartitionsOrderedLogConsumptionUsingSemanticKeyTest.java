@@ -88,7 +88,7 @@ public class TwoPartitionsOrderedLogConsumptionUsingSemanticKeyTest extends Abst
     @Override
     Map<String, Object> createConsumerConfig() {
         Map<String, Object> configs = new HashMap<>(
-                KafkaTestUtils.consumerProps("consumerGroupName", "false", embeddedKafkaBroker_TwoPartitions)
+                KafkaTestUtils.consumerProps("consumerGroupName"+getClass(), "false", embeddedKafkaBroker_TwoPartitions)
         );
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return configs;
