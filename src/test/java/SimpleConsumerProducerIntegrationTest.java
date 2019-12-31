@@ -48,6 +48,7 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
         String topicName = generateNewTopicName();
         producer.send(new ProducerRecord<>(topicName, "my-aggregate-id", "my-test-value"));
         producer.flush();
+        producer.close();
 
         consumer.subscribe(singleton(topicName));
         ConsumerRecord<String, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, topicName);

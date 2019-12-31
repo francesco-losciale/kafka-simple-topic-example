@@ -73,6 +73,7 @@ public class TwoPartitionsOrderedLogConsumptionUsingSemanticKeyTest extends Abst
             expectedOrderedRecordValues.add(recordValue);
         }
         producer.flush();
+        producer.close();
         Collections.sort(expectedOrderedRecordValues);
         return expectedOrderedRecordValues;
     }

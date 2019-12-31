@@ -71,6 +71,7 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
             expectedOrderedRecordValues.add(recordValue);
         }
         producer.flush();
+        producer.close();
         Collections.sort(expectedOrderedRecordValues);
         return expectedOrderedRecordValues;
     }
