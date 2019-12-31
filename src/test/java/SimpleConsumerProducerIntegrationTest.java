@@ -32,7 +32,7 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
     private static String TOPIC_BASE_NAME = "topic-";
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+    private EmbeddedKafkaBroker embeddedKafkaBroker_TwoPartitions;
 
     public SimpleConsumerProducerIntegrationTest() {
         super(TOPIC_BASE_NAME);
@@ -83,12 +83,12 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
     }
 
     Map<String, Object> createProducerConfig() {
-        return new HashMap<>(KafkaTestUtils.producerProps(this.embeddedKafkaBroker));
+        return new HashMap<>(KafkaTestUtils.producerProps(this.embeddedKafkaBroker_TwoPartitions));
     }
 
     Map<String, Object> createConsumerConfig() {
         Map<String, Object> configs = new HashMap<>(
-                KafkaTestUtils.consumerProps("consumerGroupName", "false", embeddedKafkaBroker)
+                KafkaTestUtils.consumerProps("consumerGroupName", "false", embeddedKafkaBroker_TwoPartitions)
         );
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return configs;
