@@ -1,3 +1,13 @@
+------------------
+TODO
+- demonstrate in integration test the exactly-once message delivery 
+    * transactionality (https://www.baeldung.com/kafka-exactly-once)
+    * https://kafka.apache.org/24/javadoc/index.html?org/apache/kafka/clients/producer/KafkaProducer.html
+    * https://www.confluent.io/blog/transactions-apache-kafka/
+    etc
+
+------------------
+
 Please check out the integration tests
 
 You can notice some errors in the logs: 
