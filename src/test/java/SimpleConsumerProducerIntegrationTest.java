@@ -2,13 +2,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -16,7 +16,9 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -55,6 +57,11 @@ public class SimpleConsumerProducerIntegrationTest extends  AbstractConsumerProd
         assertThat(singleRecord).isNotNull();
         assertThat(singleRecord.key()).isEqualTo("my-aggregate-id");
         assertThat(singleRecord.value()).isEqualTo("my-test-value");
+
+        consumer.commitSync(Duration.ofSeconds(5));
+
+        assertThat(singleRecord.offset()).isEqualTo(0);
+        assertThat(hasOnlyOnePartitionBeenWrittenOnTopic(topicName)).isTrue();
 
         consumer.close();
     }

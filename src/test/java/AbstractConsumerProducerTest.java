@@ -1,6 +1,8 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -9,6 +11,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -58,6 +61,18 @@ abstract public class AbstractConsumerProducerTest {
         Map<String, Object> configs = createProducerConfig();
         DefaultKafkaProducerFactory<String, String> kafkaProducerFactory = createKafkaProducerFactory(configs);
         this.producer = kafkaProducerFactory.createProducer();
+    }
+
+    protected boolean hasOnlyOnePartitionBeenWrittenOnTopic(String topicName) {
+        return getConsumerOffset(topicName, 0) +
+                getConsumerOffset(topicName, 1)
+                == 1;
+    }
+
+    protected long getConsumerOffset(String topicName, int partitionNumber) {
+        List<PartitionInfo> partitionList = consumer.partitionsFor(topicName);
+        final PartitionInfo partitionInfo = partitionList.get(partitionNumber);
+        return consumer.position(new TopicPartition(partitionInfo.topic(), partitionInfo.partition()));
     }
 
     static Message<String> buildMessage(String topicName, String key, String message) throws JsonProcessingException {
