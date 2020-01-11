@@ -5,7 +5,7 @@ TODO
     * https://kafka.apache.org/24/javadoc/index.html?org/apache/kafka/clients/producer/KafkaProducer.html
     * https://www.confluent.io/blog/transactions-apache-kafka/
     etc
-
+- demonstrate production code + docker compose for broker used in integration tests
 ------------------
 
 Please check out the integration tests
