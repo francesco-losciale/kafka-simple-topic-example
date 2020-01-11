@@ -1,4 +1,4 @@
-package com.kafka.example;
+package com.kafka.config;
 
 import kafka.server.KafkaConfig;
 import org.springframework.context.annotation.Bean;

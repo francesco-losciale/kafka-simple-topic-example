@@ -1,6 +1,6 @@
 package com.kafka.example;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
+import com.kafka.config.TestBeanConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,9 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
@@ -32,10 +30,6 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker_TwoPartitions;
 
-    public TwoPartitionsNoOrderedLogConsumptionTest() {
-        super("topic");
-    }
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -43,7 +37,7 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
 
     @Test
     public void should_Not_Read_Messages_In_Ordered_Fashion_When_TopicPartitions_Are_Two() {
-        String topicName = generateNewTopicName();
+        String topicName = topicName();
         List<ConsumerRecord<String, String>> consumerRecordList = new ArrayList<>();
         List<String> sortedRecordValues = produceRecordsAndReturnOrderedValues(topicName);
 
@@ -54,6 +48,11 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
         assertThat(valuesFromRecord).isNotEqualTo(sortedRecordValues);
 
         consumer.close();
+    }
+
+    @Override
+    String getEmbeddedKafkaBrokerListAsString() {
+        return embeddedKafkaBroker_TwoPartitions.getBrokersAsString();
     }
 
     private List<String> consumeRecordValues(List<ConsumerRecord<String, String>> consumerRecordList) {
@@ -76,20 +75,6 @@ public class TwoPartitionsNoOrderedLogConsumptionTest extends AbstractConsumerPr
         producer.close();
         Collections.sort(expectedOrderedRecordValues);
         return expectedOrderedRecordValues;
-    }
-
-    @Override
-    Map<String, Object> createProducerConfig() {
-        return new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker_TwoPartitions));
-    }
-
-    @Override
-    Map<String, Object> createConsumerConfig() {
-        Map<String, Object> configs = new HashMap<>(
-                KafkaTestUtils.consumerProps("consumerGroupName"+getClass(), "false", embeddedKafkaBroker_TwoPartitions)
-        );
-        configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        return configs;
     }
 
 }
