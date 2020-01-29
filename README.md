@@ -6,6 +6,7 @@ TODO
     * https://www.confluent.io/blog/transactions-apache-kafka/
     etc
 - demonstrate production code + docker compose for broker used in integration tests
+- do same project with activemq
 ------------------
 
 Please check out the integration tests
